@@ -1,10 +1,10 @@
 using System;
+using System.Collections.Generic;
 
 class Program
 {
     static void Main(string[] args)
     {
-        // using System.Collections.Generic;
 
         int endNumber = 0;
         int addNumber;
