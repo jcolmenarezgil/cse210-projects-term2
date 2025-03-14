@@ -38,10 +38,12 @@ class Program
                     break;
 
                 case 3:
+                    // Save to csv file
                     journal.SaveToFile("journal.csv");
                     break;
 
                 case 4:
+                    // Load from csv file
                     journal.LoadFromFile("journal.csv");
                     break;
                 case 5:
@@ -51,7 +53,7 @@ class Program
                     Console.WriteLine("Sorry, the entered number does not match with any option!");
                     break;
             }
-
+            // end if user choice is quit
             if (userChoice == endNumber)
             {
                 break;
