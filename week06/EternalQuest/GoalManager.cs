@@ -17,7 +17,7 @@ public class GoalManager
     public void Start()
     {
         string choice = "";
-        while (choice != "6")
+        while (choice != "7")
         {
             Console.WriteLine("\nEternal Quest Menu:");
             Console.WriteLine("1. Create New Goal");
@@ -25,7 +25,8 @@ public class GoalManager
             Console.WriteLine("3. Record an Event");
             Console.WriteLine("4. Save Goals to file");
             Console.WriteLine("5. Load Goals from file");
-            Console.WriteLine("6. Exit");
+            Console.WriteLine("6. Create New Negative Goal");
+            Console.WriteLine("7. Exit");
 
             Console.Write("\nPlease enter your choice: ");
             choice = Console.ReadLine();
@@ -36,18 +37,21 @@ public class GoalManager
                     CreateGoal();
                     break;
                 case "2":
-                    ListGoalDetails(); // Corregido
+                    ListGoalDetails();
                     break;
                 case "3":
                     RecordEvent();
                     break;
                 case "4":
-                    SaveGoals(); // Corregido
+                    SaveGoals();
                     break;
                 case "5":
-                    LoadGoals(); // Corregido
+                    LoadGoals();
                     break;
                 case "6":
+                    CreateNegativeGoal();
+                    break;
+                case "7":
                     Console.WriteLine("Thank you for participating, Now is Exiting the program.");
                     break;
                 default:
@@ -157,10 +161,10 @@ public class GoalManager
         if (int.TryParse(Console.ReadLine(), out int goalNumber) && goalNumber > 0 && goalNumber <= _goals.Count)
         {
             Goal goalToRecord = _goals[goalNumber - 1];
+            goalToRecord.RecordEvent();
 
             if (goalToRecord is ChecklistGoal checklistGoal)
             {
-                checklistGoal.RecordEvent();
                 _score += goalToRecord.GetPoints();
                 if (checklistGoal.IsComplete())
                 {
@@ -170,14 +174,12 @@ public class GoalManager
             }
             else if (goalToRecord is EternalGoal eternalGoal)
             {
-                eternalGoal.RecordEvent();
-                _score += eternalGoal.GetPoints(); // Corregido
+                _score += eternalGoal.GetPoints();
             }
             else if (goalToRecord is SimpleGoal simpleGoal)
             {
                 if (!simpleGoal.IsComplete())
                 {
-                    simpleGoal.RecordEvent();
                     _score += goalToRecord.GetPoints();
                 }
             }
@@ -262,6 +264,11 @@ public class GoalManager
                                 }
                                 _goals.Add(checklistGoal);
                                 break;
+                            case "NegativeGoal":
+                                NegativeGoal negativeGoal = new NegativeGoal(name, description, points);
+                                negativeGoal.OnNegativeEventRecorded += HandleNegativeEvent;
+                                _goals.Add(negativeGoal);
+                                break;
                             default:
                                 Console.WriteLine($"Unknown goal type: {goalType}. Skipping.");
                                 break;
@@ -274,6 +281,36 @@ public class GoalManager
         else
         {
             Console.WriteLine("File not found.");
+        }
+    }
+
+    public void CreateNegativeGoal()
+    {
+        Console.Write("\nWhat is the name of your negative goal? ");
+        string name = Console.ReadLine();
+
+        Console.Write("\nWhat is a short description of your negative goal? ");
+        string description = Console.ReadLine();
+
+        Console.Write("\nWhat is the amount of points associated with this negative goal (points to be subtracted)? ");
+        if (!int.TryParse(Console.ReadLine(), out int points))
+        {
+            Console.WriteLine("Invalid input for points. Negative goal creation failed.");
+            return;
+        }
+
+        NegativeGoal negativeGoal = new NegativeGoal(name, description, -points);
+        negativeGoal.OnNegativeEventRecorded += HandleNegativeEvent;
+        _goals.Add(negativeGoal);
+        Console.WriteLine("Negative goal created successfully!");
+    }
+
+    private void HandleNegativeEvent(object sender, int pointsToSubtract)
+    {
+        if (sender is NegativeGoal negativeGoal)
+        {
+            _score += pointsToSubtract;
+            Console.WriteLine($"\u001b[31mHave been subtracted {pointsToSubtract} by the Negative Goal called '{negativeGoal.GetShortName()}'\u001b[0m. Remaining cumulative total: {_score}");
         }
     }
 }

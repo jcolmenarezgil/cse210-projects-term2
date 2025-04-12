@@ -37,4 +37,6 @@ public abstract class Goal {
     {
         return _points;
     }
+
+    public virtual event EventHandler<int> OnNegativeEventRecorded;
 }

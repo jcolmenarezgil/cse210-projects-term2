@@ -1,0 +1,5 @@
+1050
+SimpleGoal:have a child:get a baby by born:100:True
+EternalGoal:educate child:sit with the child and educate:200
+ChecklistGoal: learn to use pod:teaching how the can use the pod:50:5:500:5
+NegativeGoal:piss on bed:the child piss on bed:300

@@ -1,4 +1,3 @@
-// EternalGoal.cs
 using System;
 
 public class EternalGoal : Goal
